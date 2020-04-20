@@ -179,6 +179,8 @@ export default class Dropdown extends PureComponent {
 
     this.mounted = false;
     this.focused = false;
+    
+    txRef = React.createRef();
 
     this.state = {
       opacity: new Animated.Value(0),
@@ -188,9 +190,11 @@ export default class Dropdown extends PureComponent {
     };
   }
 
-  componentWillReceiveProps({ value }) {
-    if (value !== this.props.value) {
-      this.setState({ value });
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.value !== this.props.value) {
+      this.txRef.current.setValue(this.props.value)
+    } else if (prevState.value !== this.state.value) {
+      this.txRef.current.setValue(this.state.value)
     }
   }
 
@@ -505,15 +509,15 @@ export default class Dropdown extends PureComponent {
 
     return (
       <TextField
+        ref={this.txRef}
         label=''
         labelHeight={dropdownOffset.top - Platform.select({ ios: 1, android: 2 })}
 
         {...props}
 
-        value={title}
         editable={false}
         onChangeText={undefined}
-        renderAccessory={renderAccessory}
+        renderRightAccessory={renderAccessory}
       />
     );
   }
